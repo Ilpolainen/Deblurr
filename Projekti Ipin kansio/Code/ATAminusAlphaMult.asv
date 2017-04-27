@@ -1,0 +1,9 @@
+function res = ATAminusAlphaMult( x, alpha, pseudo, constant )
+% Performs the matrix multiplication (A^TA+alphaI)x
+% Naturally needs alpha and x and A comes in form of index matrix and the
+% constan
+temp = psfPseudo(x, constant, pseudo);
+temp = psfPseudo(temp, constant, pseudo);
+res = temp+alpha*x;
+end
+

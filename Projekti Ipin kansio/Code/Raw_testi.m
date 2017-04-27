@@ -51,18 +51,20 @@ bblur = applyLightPSF2(blueVec,constant,pseudo);
 toc
 'Image blurred'
 
-alpha = 0;
-itercount = 600;
+itercount=100;
+alpha=.1;
+starting = rand(n*n,1);
+% starting(n*n/2:n*n/2+1,1)=1;
 tic
-rconstruct = ConjugateGrad(100*eye(n*n,1),rblur,pseudo,alpha,constant,itercount);
+rconstruct = ConjugateGrad(starting,rblur,pseudo,alpha,constant,itercount);
 'Red recontruction prosessed'
 toc
 tic
-gconstruct = ConjugateGrad(100*eye(n*n,1),gblur,pseudo,alpha,constant,itercount);
+gconstruct = ConjugateGrad(starting,gblur,pseudo,alpha,constant,itercount);
 'Green recontruction prosessed'
 toc
 tic
-bconstruct = ConjugateGrad(100*eye(n*n,1),bblur,pseudo,alpha,constant,itercount);
+bconstruct = ConjugateGrad(starting,bblur,pseudo,alpha,constant,itercount);
 'Blue recontruction prosessed'
 toc
 
