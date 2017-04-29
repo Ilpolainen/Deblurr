@@ -7,31 +7,24 @@
 
 im = imread('cat.CR2');
 k = 11;
-im = makeSquare(im,k);
+im = cut(im,k,2300,1300);
 
-
+imagesc(im);
 % ---------------
-% Lousy downsampling
+% downsampling
 % ---------------
-
-red=im(:,:,1);
-red = downsample(red,2);
-blue=im(:,:,3);
-blue = downsample(blue,2);
-green=im(:,:,2);
-green = downsample(green,2);
-dims = size(red);
+im = imresize(im,0.5);
+dims = size(im);
 n = dims(1);
 
-% ------------------
-% Putting it back together with helper method. Here n is only needed if the
-% layers are in vector-presentation so that the method knows what is the
-% size of the image.
-% ------------------
-im=buildImage(red,green,blue,n);
 
+pieceXL = cut(im,9,120,50);
 
+pieceL = cut(im,8,220,100);
 
+pieceS = cut(im,7,240,130);
+
+piece = pieceXL;
 % --------------------
 % Build psf-pseudomatrix which is used in conjugate gradient -algorithm.
 % PsfTools also gives the constant of the psf-disc. Indexvec is used to
@@ -39,6 +32,10 @@ im=buildImage(red,green,blue,n);
 % affected by the psf for every point og the convoluted vector. 
 % It is used for psfPseudo which does the multiplication with the pseudomatrix. 
 % --------------------
+
+dims = size(piece);
+n = dims(1);
+[red,green,blue] = layers(piece);
 
 [disc,psfVec,constant,indexVec] = psfTools(23,n);
 pseudo = formPseudoMatrix(indexVec,n);
@@ -48,30 +45,36 @@ pseudo = formPseudoMatrix(indexVec,n);
 % ------------------
 
 rm = fromMatToVec(red);
-bm = fromMatToVec(blue);
 gm = fromMatToVec(green);
-
+bm = fromMatToVec(blue);
 
 % ----------------
 % The iterationcount of the Conjugate Gradient algorithm, and weight alpha.
 % starting means x_0. Here it's one dot in the middle.
 % ----------------
 
-itercount=100;
 alpha=.01;
+threshold = 0.000001;
 starting = zeros(n*n,1);
 starting(n*n/2,1)=1;
+
 
 % ----------------
 % Performing the algorithm
 % ----------------
 
-myR =  conjugateGrad(starting,rm,pseudo,alpha,constant,itercount);
-'Red Processed';
-myG =  conjugateGrad(starting,gm,pseudo,alpha,constant,itercount);
-'Green Processed';
-myB =  conjugateGrad(starting,bm,pseudo,alpha,constant,itercount);
-'Blue Processed';
+tic
+myR =  conjugateGrad(starting,rm,pseudo,alpha,constant,threshold);
+'Red Processed'
+toc
+tic
+myG =  conjugateGrad(starting,gm,pseudo,alpha,constant,threshold);
+'Green Processed'
+toc
+tic
+myB =  conjugateGrad(starting,bm,pseudo,alpha,constant,threshold);
+'Blue Processed'
+toc
 % -------------------
 % Putting it altogether. The matrix conversion might not be needed, but I'm
 % not quite sure the buildimage really does what it shpuld, so just in
@@ -87,31 +90,15 @@ myRecon = buildImage(myR,myG,myB,n);
 % Plotting
 % -----------------------
 figure(1)
+clf
 imagesc(myRecon);
 axis equal
 title('My Reconstruction')
 
-figure(3)
-imagesc(im);
+
+figure(2)
+clf
+imagesc(pieceXL);
 axis equal
 title('Original')
-
-
-function res = downsample(matrix, k)
-si = size(matrix);
-h = si(1);
-w = si(2);
-mh = mod(h,k);
-mw = mod(w,k);
-nh = (h - mh)/k;
-nw = (w - mw)/k;
-
-res = zeros(nh,nw);
-for iii = 1 : nh
-    for jjj = 1 : nw
-        res(iii,jjj)=matrix(iii*k,jjj*k);
-    end
-end
-res = uint8(res);
-end
 

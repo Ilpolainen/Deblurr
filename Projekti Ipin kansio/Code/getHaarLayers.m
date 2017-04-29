@@ -1,11 +1,9 @@
-function [ LU, LD, RU, RD ] = getLayers( im, n )
-n
+function [ LU, LD, RU, RD ] = getHaarLayers( im, n )
 dims = size(im(:,:,1));
 w = dims(1);
 n = w/2^n;
-n
 n = uint16(n);
-n
+
 r = im(:,:,1);
 g = im(:,:,2);
 b = im(:,:,3);

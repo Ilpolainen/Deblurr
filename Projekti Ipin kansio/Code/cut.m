@@ -1,13 +1,9 @@
-function res = cut( im, x,y,side )
-r = im(:,:,1);
-g = im(:,:,2);
-b = im(:,:,3);
-
-empty = zeros(side,side,3);
-empty(:,:,1) = r(y:y+side,x:x+side);
-empty(:,:,2) = g(y:y+side,x:x+side);
-empty(:,:,3) = b(y:y+side,x:x+side);
-
-res = empty;
+function res = cut(image,k,x,y)
+% Given image, the method returns subimage from (x,y) to (x+2^k-1,y+2^k-1).
+% Insures the new image is square and the length of the side is power of
+% two.
+res = zeros(2^k,2^k,3);
+res(:,:,:)=image(y:y+2^k-1,x:x+2^k-1,:);
+res = uint8(res);
 end
 
