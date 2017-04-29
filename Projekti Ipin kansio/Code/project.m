@@ -66,10 +66,12 @@ starting(n*n/2,1)=1;
 % Performing the algorithm
 % ----------------
 
-myR =  ConjugateGrad(starting,rm,pseudo,alpha,constant,itercount);
-myB =  ConjugateGrad(starting,bm,pseudo,alpha,constant,itercount);
-myG =  ConjugateGrad(starting,gm,pseudo,alpha,constant,itercount);
-
+myR =  conjugateGrad(starting,rm,pseudo,alpha,constant,itercount);
+'Red Processed';
+myG =  conjugateGrad(starting,gm,pseudo,alpha,constant,itercount);
+'Green Processed';
+myB =  conjugateGrad(starting,bm,pseudo,alpha,constant,itercount);
+'Blue Processed';
 % -------------------
 % Putting it altogether. The matrix conversion might not be needed, but I'm
 % not quite sure the buildimage really does what it shpuld, so just in

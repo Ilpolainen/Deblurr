@@ -1,7 +1,10 @@
 function [disc,psfVec,constant,indexVec] = psfTools( size, n )
+% The function returns the matrixpresentation of the convolution disc, the
+% 2D-psf in form of vector, the constant value of the disc 
+% (same value than the non-zero value in the disc and the psfVec). The
+% index-vec gives just the indexes of the non-zero-value in the psfVector.
 
 radius = (size-1)/2;
-
 psf = zeros(size,size);
 counter = 0;
 
