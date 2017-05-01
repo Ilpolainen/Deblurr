@@ -13,18 +13,24 @@ imagesc(im);
 % ---------------
 % downsampling
 % ---------------
-im = imresize(im,0.5);
-dims = size(im);
+dsr = 2;
+im = imresize(im,0.5^(dsr-1));
+
+piece = im;
+dims = size(piece);
 n = dims(1);
 
 
-pieceXL = cut(im,9,120,50);
+% ------------------
+% Convert the layers into vectors
+% ------------------
 
-pieceL = cut(im,8,220,100);
+[red,green,blue] = layers(piece);
+rm = fromMatToVec(red);
+gm = fromMatToVec(green);
+bm = fromMatToVec(blue);
 
-pieceS = cut(im,7,240,130);
 
-piece = pieceXL;
 % --------------------
 % Build psf-pseudomatrix which is used in conjugate gradient -algorithm.
 % PsfTools also gives the constant of the psf-disc. Indexvec is used to
@@ -33,20 +39,11 @@ piece = pieceXL;
 % It is used for psfPseudo which does the multiplication with the pseudomatrix. 
 % --------------------
 
-dims = size(piece);
-n = dims(1);
-[red,green,blue] = layers(piece);
-
-[disc,psfVec,constant,indexVec] = psfTools(23,n);
+radius = 11;
+[disc,psfVec,constant,indexVec] = psfTools(radius,n);
 pseudo = formPseudoMatrix(indexVec,n);
 
-% ------------------
-% Convert the layers into vectors
-% ------------------
 
-rm = fromMatToVec(red);
-gm = fromMatToVec(green);
-bm = fromMatToVec(blue);
 
 % ----------------
 % The iterationcount of the Conjugate Gradient algorithm, and weight alpha.
@@ -54,7 +51,7 @@ bm = fromMatToVec(blue);
 % ----------------
 
 alpha=.01;
-threshold = 0.000001;
+threshold = 0.0000001;
 starting = zeros(n*n,1);
 starting(n*n/2,1)=1;
 
@@ -98,7 +95,7 @@ title('My Reconstruction')
 
 figure(2)
 clf
-imagesc(pieceXL);
+imagesc(im);
 axis equal
 title('Original')
 

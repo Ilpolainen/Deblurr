@@ -1,19 +1,18 @@
-function [disc,psfVec,constant,indexVec] = psfTools( size, n )
+function [disc,psfVec,constant,indexVec] = psfTools( r, n )
 % The function returns the matrixpresentation of the convolution disc, the
 % 2D-psf in form of vector, the constant value of the disc 
 % (same value than the non-zero value in the disc and the psfVec). The
 % index-vec gives just the indexes of the non-zero-value in the psfVector.
-
-radius = (size-1)/2;
+size = 2*r+1;
 psf = zeros(size,size);
 counter = 0;
 
 
-for iii = -radius : radius
-    for jjj = -radius : radius
-        if ((iii/radius)^2 + (jjj/radius)^2 <= 1)
+for iii = -r : r
+    for jjj = -r : r
+        if ((iii/r)^2 + (jjj/r)^2 <= 1)
             counter = counter +1;
-            psf(iii+radius+1,jjj+radius+1) = 1;
+            psf(iii+r+1,jjj+r+1) = 1;
         end
     end
 end
